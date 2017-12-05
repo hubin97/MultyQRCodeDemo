@@ -10,6 +10,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "Masonry.h"
 
 #define DeviceMaxHeight ([UIScreen mainScreen].bounds.size.height)
 #define DeviceMaxWidth ([UIScreen mainScreen].bounds.size.width)
@@ -36,7 +37,7 @@
     CGPoint lastPoint;
     //UIImageView * scanZomeBack;
     
-    UIView *_scanZomeBoundView;
+    //UIView *_scanZomeBoundView;
     UIView *_scanZomeView;
 }
 @end
@@ -150,13 +151,15 @@
 - (CGRect)setScanAreaWithBgImg
 {
     CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
-    _scanZomeBoundView = [[UIView alloc]initWithFrame:mImagerect];
-    [self addSubview:_scanZomeBoundView];
+//    _scanZomeBoundView = [[UIView alloc]initWithFrame:mImagerect];
+//    [self addSubview:_scanZomeBoundView];
 
-    _scanZomeView = [[UIView alloc]initWithFrame:CGRectMake(10, 10, mImagerect.size.width - 20, mImagerect.size.height - 20)];
-    [_scanZomeBoundView addSubview:_scanZomeView];
+    _scanZomeView = [[UIView alloc]initWithFrame:mImagerect];
+    [self addSubview:_scanZomeView];
 
-    [self createViewWithRect:_scanZomeView.bounds];
+    //_scanZomeBoundView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self createViewWithRect:mImagerect];
 
     //(origin = (x = 0.323943661971831, y = 0.1875), size = (width = 0.352112676056338, height = 0.625))
     return [self getScanCrop:mImagerect readerViewBounds:self.frame];
@@ -168,23 +171,29 @@
     _scanZomeView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor;
     NSArray *icons = @[@"gis_rect_lt",@"gis_rect_rt",@"gis_rect_lb",@"gis_rect_rb"];
     
+    //[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_tableView)]];
+
     CGFloat iconFlagH = 30.0f;
-    for (int i = 1001; i <= 1005; i++)
+    for (int i = 101; i <= 105; i++)
     {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_scanZomeBoundView addSubview:button];
+        [_scanZomeView addSubview:button];
         [button setTag:i];
         
         [button addTarget:self action:@selector(touchesBegan:withEvent:) forControlEvents:UIControlEventTouchDown];
         [button addTarget:self action:@selector(touchesMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
         [button addTarget:self action:@selector(touchesEnded:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-        if(i > 1001)[button setImage:[UIImage imageNamed:icons[i - 1002]] forState:UIControlStateNormal];
-        
-        if(i == 1001)[button setFrame:CGRectMake(iconFlagH/2, iconFlagH/2, centerRect.size.width - iconFlagH, centerRect.size.height - iconFlagH)];
-        if(i == 1002)[button setFrame:CGRectMake(-iconFlagH/2, -iconFlagH/2, iconFlagH, iconFlagH)];
-        if(i == 1003)[button setFrame:CGRectMake(centerRect.size.width - iconFlagH/2, -iconFlagH/2, iconFlagH, iconFlagH)];
-        if(i == 1004)[button setFrame:CGRectMake(-iconFlagH/2, centerRect.size.height - iconFlagH/2, iconFlagH, iconFlagH)];
-        if(i == 1005)[button setFrame:CGRectMake(centerRect.size.width - iconFlagH/2, centerRect.size.height - iconFlagH/2, iconFlagH, iconFlagH)];
+        if(i > 101)[button setImage:[UIImage imageNamed:icons[i - 102]] forState:UIControlStateNormal];
+       
+        [button mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.width.height.mas_equalTo(iconFlagH);
+            if(i== 101) make.edges.equalTo(_scanZomeView);
+            
+            if(i== 102) make.left.top.equalTo(_scanZomeView);
+            if(i== 103) make.right.top.equalTo(_scanZomeView);
+            if(i== 104) make.left.bottom.equalTo(_scanZomeView);
+            if(i== 105) make.right.bottom.equalTo(_scanZomeView);
+        }];
     }
 }
 
@@ -206,26 +215,29 @@
     float moveY = currentPoint.y - lastPoint.y;
     lastPoint = currentPoint;
     CGRect frame = _scanZomeView.frame;
-    if (touch.view.tag == 1001) {
+    if (touch.view.tag == 101) {
         frame.origin.x += moveX;
         frame.origin.y += moveY;
-    } else if (touch.view.tag == 1002) {
+        
+    } else if (touch.view.tag == 102) {
         frame.origin.x += moveX;
         frame.origin.y += moveY;
         frame.size.width -= moveX;
         frame.size.height -= moveY;
-    } else if (touch.view.tag == 1003) {
+    } else if (touch.view.tag == 103) {
         frame.origin.y += moveY;
         frame.size.width += moveX;
         frame.size.height -= moveY;
-    } else if (touch.view.tag == 1004) {
+    } else if (touch.view.tag == 104) {
         frame.origin.x += moveX;
         frame.size.width -= moveX;
         frame.size.height += moveY;
-    } else if (touch.view.tag == 1005) {
+    } else if (touch.view.tag == 105) {
         frame.size.width += moveX;
         frame.size.height += moveY;
     }
+    
+    // !!!!:限制view的大小
     int height = [UIScreen mainScreen].bounds.size.height>480 ? 504.0 : 416.0;
     frame.origin.x = frame.origin.x < 0 ? 0 : frame.origin.x;
     frame.origin.y = frame.origin.y < 0 ? 0 : frame.origin.y;
@@ -238,8 +250,24 @@
     _scanZomeView.frame = frame;
     _scanZomeView.userInteractionEnabled = YES;
     
-//    [_scanZomeView setNeedsLayout];
-//    [_scanZomeView layoutIfNeeded];
+    CGFloat iconFlagH = 30.0f;
+    for (int i = 101; i <= 105; i ++)
+    {
+        UIButton *button = (UIButton *)[self viewWithTag:i];
+        
+        [button mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.width.height.mas_equalTo(iconFlagH);
+            
+            if(i== 101) make.edges.equalTo(_scanZomeView);
+            if(i== 102) make.left.top.equalTo(_scanZomeView);
+            if(i== 103) make.right.top.equalTo(_scanZomeView);
+            if(i== 104) make.left.bottom.equalTo(_scanZomeView);
+            if(i== 105) make.right.bottom.equalTo(_scanZomeView);
+        }];
+        
+//        [button setNeedsLayout];
+//        [button layoutIfNeeded];
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
