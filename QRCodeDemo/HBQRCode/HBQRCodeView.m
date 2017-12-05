@@ -29,8 +29,6 @@
 [View.layer setBorderColor:[Color CGColor]]
 
 
-
-
 @interface HBQRCodeView()<AVCaptureMetadataOutputObjectsDelegate>
 {
     AVCaptureSession *session;
@@ -39,6 +37,8 @@
     
     //UIView *_scanZomeBoundView;
     UIView *_scanZomeView;
+    UIView *_gridView; // 网格控件
+    NSUInteger _styleCol;
 }
 @end
 @implementation HBQRCodeView
@@ -151,13 +151,9 @@
 - (CGRect)setScanAreaWithBgImg
 {
     CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
-//    _scanZomeBoundView = [[UIView alloc]initWithFrame:mImagerect];
-//    [self addSubview:_scanZomeBoundView];
 
     _scanZomeView = [[UIView alloc]initWithFrame:mImagerect];
     [self addSubview:_scanZomeView];
-
-    //_scanZomeBoundView.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self createViewWithRect:mImagerect];
 
@@ -167,13 +163,57 @@
 
 - (void)createViewWithRect:(CGRect)centerRect
 {
-    _scanZomeView.layer.borderWidth = 1.5;
-    _scanZomeView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor;
-    NSArray *icons = @[@"gis_rect_lt",@"gis_rect_rt",@"gis_rect_lb",@"gis_rect_rb"];
+//    _scanZomeView.layer.borderWidth = 1.5;
+//    _scanZomeView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor;
     
-    //[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_tableView)]];
-
     CGFloat iconFlagH = 30.0f;
+
+    // 网格控件 规格 2*4  4*4
+    _gridView = [[UIView alloc]init];
+    _gridView.layer.borderWidth = 1.5;
+    _gridView.layer.borderColor = [UIColor redColor].CGColor;
+    _gridView.userInteractionEnabled = YES;
+    
+    [_scanZomeView addSubview:_gridView];
+    [_gridView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(_scanZomeView).insets(UIEdgeInsetsMake(iconFlagH/2, iconFlagH/2, iconFlagH/2, iconFlagH/2));
+    }];
+    
+    // row
+    for (int row = 0; row < 3; row ++)
+    {
+        UILabel *lineLabel = [[UILabel alloc]init];
+        lineLabel.layer.borderWidth = 1.5;
+        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
+        [_gridView addSubview:lineLabel];
+        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(_gridView);
+            //!!!!:注意此时gridView高度仍为0
+            //make.top.equalTo(gridView.mas_bottom).multipliedBy(1/4);
+            make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * (row + 1)/4);
+            make.height.mas_equalTo(@1);
+        }];
+    }
+    
+    // col  2 ~ 4
+    _styleCol = 3;  // 1/3
+    for (int col = 0; col < _styleCol; col ++)
+    {
+        UILabel *lineLabel = [[UILabel alloc]init];
+        lineLabel.layer.borderWidth = 1.5;
+        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
+        [_gridView addSubview:lineLabel];
+        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.bottom.equalTo(_gridView);
+            //!!!!:注意此时gridView宽度仍为0
+            make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * (col + 1)/(_styleCol + 1));
+            make.width.mas_equalTo(@1);
+        }];
+    }
+    
+    // ------
+    // 操作控件
+    NSArray *icons = @[@"gis_rect_lt",@"gis_rect_rt",@"gis_rect_lb",@"gis_rect_rb"];
     for (int i = 101; i <= 105; i++)
     {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -267,6 +307,44 @@
         
 //        [button setNeedsLayout];
 //        [button layoutIfNeeded];
+    }
+    
+//    [_gridView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.edges.equalTo(_scanZomeView).insets(UIEdgeInsetsMake(iconFlagH/2, iconFlagH/2, iconFlagH/2, iconFlagH/2));
+//    }];
+//
+    // ---
+    [_gridView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    // row
+    for (int row = 0; row < 3; row ++)
+    {
+        UILabel *lineLabel = [[UILabel alloc]init];
+        lineLabel.layer.borderWidth = 1.5;
+        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
+        [_gridView addSubview:lineLabel];
+        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(_gridView);
+            //!!!!:注意此时gridView高度仍为0
+            //make.top.equalTo(gridView.mas_bottom).multipliedBy(1/4);
+            make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * (row + 1)/4);
+            make.height.mas_equalTo(@1);
+        }];
+    }
+
+    // col  2 ~ 4
+    for (int col = 0; col < _styleCol; col ++)
+    {
+        UILabel *lineLabel = [[UILabel alloc]init];
+        lineLabel.layer.borderWidth = 1.5;
+        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
+        [_gridView addSubview:lineLabel];
+        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.bottom.equalTo(_gridView);
+            //!!!!:注意此时gridView宽度仍为0
+            make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * (col + 1)/(_styleCol + 1));
+            make.width.mas_equalTo(@1);
+        }];
     }
 }
 
