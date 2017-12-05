@@ -19,6 +19,10 @@
 		047F9DE71DF7B8070053E07F /* HBQRCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047F9DE51DF7B8070053E07F /* HBQRCodeView.m */; };
 		047F9DEA1DF7BDB80053E07F /* HBScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 047F9DE91DF7BDB80053E07F /* HBScanViewController.m */; };
 		047F9DFC1DF811ED0053E07F /* Resources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 047F9DFB1DF811ED0053E07F /* Resources.bundle */; };
+		53B59D081FD4EB8200885BBA /* gis_rect_rb.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D041FD4EB8200885BBA /* gis_rect_rb.png */; };
+		53B59D091FD4EB8200885BBA /* gis_rect_lt.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D051FD4EB8200885BBA /* gis_rect_lt.png */; };
+		53B59D0A1FD4EB8200885BBA /* gis_rect_rt.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D061FD4EB8200885BBA /* gis_rect_rt.png */; };
+		53B59D0B1FD4EB8200885BBA /* gis_rect_lb.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D071FD4EB8200885BBA /* gis_rect_lb.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +67,10 @@
 		047F9DE81DF7BDB80053E07F /* HBScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBScanViewController.h; sourceTree = "<group>"; };
 		047F9DE91DF7BDB80053E07F /* HBScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBScanViewController.m; sourceTree = "<group>"; };
 		047F9DFB1DF811ED0053E07F /* Resources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Resources.bundle; sourceTree = "<group>"; };
+		53B59D041FD4EB8200885BBA /* gis_rect_rb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_rb.png; sourceTree = "<group>"; };
+		53B59D051FD4EB8200885BBA /* gis_rect_lt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_lt.png; sourceTree = "<group>"; };
+		53B59D061FD4EB8200885BBA /* gis_rect_rt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_rt.png; sourceTree = "<group>"; };
+		53B59D071FD4EB8200885BBA /* gis_rect_lb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_lb.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +166,10 @@
 		047F9DE01DF7B8070053E07F /* HBQRCode */ = {
 			isa = PBXGroup;
 			children = (
+				53B59D071FD4EB8200885BBA /* gis_rect_lb.png */,
+				53B59D051FD4EB8200885BBA /* gis_rect_lt.png */,
+				53B59D041FD4EB8200885BBA /* gis_rect_rb.png */,
+				53B59D061FD4EB8200885BBA /* gis_rect_rt.png */,
 				047F9DFB1DF811ED0053E07F /* Resources.bundle */,
 				047F9DE11DF7B8070053E07F /* HBQRCode.h */,
 				047F9DE21DF7B8070053E07F /* HBQRCoder.h */,
@@ -236,7 +248,7 @@
 				TargetAttributes = {
 					040CA3E11DE2937200033AE3 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = YTPNCWF278;
+						DevelopmentTeam = B6FL3MEU36;
 						ProvisioningStyle = Automatic;
 					};
 					040CA3FA1DE2937300033AE3 = {
@@ -280,8 +292,12 @@
 			files = (
 				040CA3F51DE2937200033AE3 /* LaunchScreen.storyboard in Resources */,
 				040CA3F21DE2937200033AE3 /* Assets.xcassets in Resources */,
+				53B59D0A1FD4EB8200885BBA /* gis_rect_rt.png in Resources */,
+				53B59D081FD4EB8200885BBA /* gis_rect_rb.png in Resources */,
 				047F9DFC1DF811ED0053E07F /* Resources.bundle in Resources */,
 				040CA3F01DE2937200033AE3 /* Main.storyboard in Resources */,
+				53B59D091FD4EB8200885BBA /* gis_rect_lt.png in Resources */,
+				53B59D0B1FD4EB8200885BBA /* gis_rect_lb.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,11 +478,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = YTPNCWF278;
+				DEVELOPMENT_TEAM = B6FL3MEU36;
 				INFOPLIST_FILE = QRCodeDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = TUTK.QRCodeDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = TUTK.QRCodeDemo.xxx;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -477,11 +493,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = YTPNCWF278;
+				DEVELOPMENT_TEAM = B6FL3MEU36;
 				INFOPLIST_FILE = QRCodeDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = TUTK.QRCodeDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = TUTK.QRCodeDemo.xxx;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

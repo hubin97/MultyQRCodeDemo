@@ -89,10 +89,10 @@
 {
     _qrCodeView.is_Anmotion = NO;
     
-    if (_qrCodeView.is_AnmotionFinished)
-    {
-        [_qrCodeView loopDrawLine];
-    }
+//    if (_qrCodeView.is_AnmotionFinished)
+//    {
+//        [_qrCodeView loopDrawLine];
+//    }
     
     [_qrCodeView start];
 }

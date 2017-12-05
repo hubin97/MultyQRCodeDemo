@@ -33,6 +33,11 @@
 @interface HBQRCodeView()<AVCaptureMetadataOutputObjectsDelegate>
 {
     AVCaptureSession *session;
+    CGPoint lastPoint;
+    //UIImageView * scanZomeBack;
+    
+    UIView *_scanZomeBoundView;
+    UIView *_scanZomeView;
 }
 @end
 @implementation HBQRCodeView
@@ -131,42 +136,123 @@
 #warning ... 必须加入layer才能展示
     [self.layer insertSublayer:layer atIndex:0];
 
-    [self setOverlayPickerView:self];
+    //[self setOverlayPickerView:self];
 
-    //开始捕获
+    //开始捕获 // saom
     [session startRunning];
 }
 
 
-
+#pragma mark ---
 /**
  设置扫描区域,并返回cgrect
  */
 - (CGRect)setScanAreaWithBgImg
 {
-    //扫描区域
-    //NSString *bundlePath  = [[NSBundle mainBundle] pathForResource:@"Resource" ofType:@"bundle"];
+    CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
+    _scanZomeBoundView = [[UIView alloc]initWithFrame:mImagerect];
+    [self addSubview:_scanZomeBoundView];
 
-    NSString *hbImagePath = [[NSBundle bundleWithPath:bundlePath] pathForResource:@"scanscanBg" ofType:@"png" inDirectory:@"Images"];
-    
-//    NSLog(@"hbImagePath: %@", hbImagePath);
+    _scanZomeView = [[UIView alloc]initWithFrame:CGRectMake(10, 10, mImagerect.size.width - 20, mImagerect.size.height - 20)];
+    [_scanZomeBoundView addSubview:_scanZomeView];
 
-    UIImage *hbImage = [UIImage imageNamed:hbImagePath];
-    UIImageView * scanZomeBack = [[UIImageView alloc] init];
-    scanZomeBack.backgroundColor = [UIColor clearColor];
-    scanZomeBack.layer.borderColor = [UIColor whiteColor].CGColor;
-    scanZomeBack.layer.borderWidth = 2.5;
-    scanZomeBack.image = hbImage;
-    //添加一个背景图片
-    CGRect mImagerect = CGRectMake(60*widthRate, (DeviceMaxHeight-200*widthRate)/2, 200*widthRate, 200*widthRate);
-    [scanZomeBack setFrame:mImagerect];
-    [self addSubview:scanZomeBack];
-    
+    [self createViewWithRect:_scanZomeView.bounds];
+
     //(origin = (x = 0.323943661971831, y = 0.1875), size = (width = 0.352112676056338, height = 0.625))
     return [self getScanCrop:mImagerect readerViewBounds:self.frame];
 }
 
+- (void)createViewWithRect:(CGRect)centerRect
+{
+    _scanZomeView.layer.borderWidth = 1.5;
+    _scanZomeView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor;
+    NSArray *icons = @[@"gis_rect_lt",@"gis_rect_rt",@"gis_rect_lb",@"gis_rect_rb"];
+    
+    CGFloat iconFlagH = 30.0f;
+    for (int i = 1001; i <= 1005; i++)
+    {
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_scanZomeBoundView addSubview:button];
+        [button setTag:i];
+        
+        [button addTarget:self action:@selector(touchesBegan:withEvent:) forControlEvents:UIControlEventTouchDown];
+        [button addTarget:self action:@selector(touchesMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
+        [button addTarget:self action:@selector(touchesEnded:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+        if(i > 1001)[button setImage:[UIImage imageNamed:icons[i - 1002]] forState:UIControlStateNormal];
+        
+        if(i == 1001)[button setFrame:CGRectMake(iconFlagH/2, iconFlagH/2, centerRect.size.width - iconFlagH, centerRect.size.height - iconFlagH)];
+        if(i == 1002)[button setFrame:CGRectMake(-iconFlagH/2, -iconFlagH/2, iconFlagH, iconFlagH)];
+        if(i == 1003)[button setFrame:CGRectMake(centerRect.size.width - iconFlagH/2, -iconFlagH/2, iconFlagH, iconFlagH)];
+        if(i == 1004)[button setFrame:CGRectMake(-iconFlagH/2, centerRect.size.height - iconFlagH/2, iconFlagH, iconFlagH)];
+        if(i == 1005)[button setFrame:CGRectMake(centerRect.size.width - iconFlagH/2, centerRect.size.height - iconFlagH/2, iconFlagH, iconFlagH)];
+    }
+}
 
+#pragma mark - Touch Event
+- (void)touchesBegan:(UIControl *)touches withEvent:(UIEvent *)event {
+    NSLog(@"touchesBegan---");
+    
+    UITouch *touch = [[event allTouches] anyObject];
+    lastPoint = [touch locationInView:self];
+}
+
+- (void)touchesMoved:(UIControl *)touches withEvent:(UIEvent *)event {
+    
+    NSLog(@"touchesMoved---");
+    
+    UITouch *touch = [[event allTouches] anyObject];
+    CGPoint currentPoint = [touch locationInView:self];
+    float moveX = currentPoint.x - lastPoint.x;
+    float moveY = currentPoint.y - lastPoint.y;
+    lastPoint = currentPoint;
+    CGRect frame = _scanZomeView.frame;
+    if (touch.view.tag == 1001) {
+        frame.origin.x += moveX;
+        frame.origin.y += moveY;
+    } else if (touch.view.tag == 1002) {
+        frame.origin.x += moveX;
+        frame.origin.y += moveY;
+        frame.size.width -= moveX;
+        frame.size.height -= moveY;
+    } else if (touch.view.tag == 1003) {
+        frame.origin.y += moveY;
+        frame.size.width += moveX;
+        frame.size.height -= moveY;
+    } else if (touch.view.tag == 1004) {
+        frame.origin.x += moveX;
+        frame.size.width -= moveX;
+        frame.size.height += moveY;
+    } else if (touch.view.tag == 1005) {
+        frame.size.width += moveX;
+        frame.size.height += moveY;
+    }
+    int height = [UIScreen mainScreen].bounds.size.height>480 ? 504.0 : 416.0;
+    frame.origin.x = frame.origin.x < 0 ? 0 : frame.origin.x;
+    frame.origin.y = frame.origin.y < 0 ? 0 : frame.origin.y;
+    frame.origin.x = (frame.origin.x + frame.size.width) > 320.0 ? (320.0 - frame.size.width) : frame.origin.x;
+    frame.origin.y = (frame.origin.y + frame.size.height) > height ? (height - frame.size.height) : frame.origin.y;
+    frame.size.width = frame.size.width < 100.0 ? 100.0 : frame.size.width;
+    frame.size.height = frame.size.height < 66.7 ? 66.7 : frame.size.height;
+    frame.size.width = frame.size.width > 320.0 ? 320.0 : frame.size.width;
+    frame.size.height = frame.size.height > height ? height : frame.size.height;
+    _scanZomeView.frame = frame;
+    _scanZomeView.userInteractionEnabled = YES;
+    
+//    [_scanZomeView setNeedsLayout];
+//    [_scanZomeView layoutIfNeeded];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    NSLog(@"touchesEnded---");
+    //if(!self.choiceView.isHidden)
+    //    [self performSelectorOnMainThread:@selector(selectCell) withObject:nil waitUntilDone:YES];
+}
+
+
+
+
+#pragma mark --
 /**
  布局扫描页边框
 
@@ -176,7 +262,7 @@
 {
     CGFloat wid = 60*widthRate;
     CGFloat heih = (DeviceMaxHeight-200*widthRate)/2;
-    
+
     //最上部view
     CGFloat alpha = 0.6;
     UIView* upView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DeviceMaxWidth, heih)];
@@ -362,6 +448,5 @@
         }
     }
 }
-
 
 @end
