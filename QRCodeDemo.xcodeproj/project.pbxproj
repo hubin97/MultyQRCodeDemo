@@ -30,6 +30,10 @@
 		531A09801FD669780054BC57 /* MASViewConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A09751FD669780054BC57 /* MASViewConstraint.m */; };
 		531A09811FD669780054BC57 /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A09761FD669780054BC57 /* MASViewAttribute.m */; };
 		531A09821FD669780054BC57 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 531A09771FD669780054BC57 /* Info.plist */; };
+		531A09871FD698360054BC57 /* check1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 531A09851FD698350054BC57 /* check1@2x.png */; };
+		531A09881FD698360054BC57 /* check2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 531A09861FD698360054BC57 /* check2@2x.png */; };
+		531A098B1FD69B020054BC57 /* scan.png in Resources */ = {isa = PBXBuildFile; fileRef = 531A09891FD69B010054BC57 /* scan.png */; };
+		531A098C1FD69B020054BC57 /* guige.png in Resources */ = {isa = PBXBuildFile; fileRef = 531A098A1FD69B020054BC57 /* guige.png */; };
 		53B59D081FD4EB8200885BBA /* gis_rect_rb.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D041FD4EB8200885BBA /* gis_rect_rb.png */; };
 		53B59D091FD4EB8200885BBA /* gis_rect_lt.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D051FD4EB8200885BBA /* gis_rect_lt.png */; };
 		53B59D0A1FD4EB8200885BBA /* gis_rect_rt.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B59D061FD4EB8200885BBA /* gis_rect_rt.png */; };
@@ -104,6 +108,10 @@
 		531A09751FD669780054BC57 /* MASViewConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewConstraint.m; sourceTree = "<group>"; };
 		531A09761FD669780054BC57 /* MASViewAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewAttribute.m; sourceTree = "<group>"; };
 		531A09771FD669780054BC57 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		531A09851FD698350054BC57 /* check1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check1@2x.png"; sourceTree = "<group>"; };
+		531A09861FD698360054BC57 /* check2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check2@2x.png"; sourceTree = "<group>"; };
+		531A09891FD69B010054BC57 /* scan.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scan.png; sourceTree = "<group>"; };
+		531A098A1FD69B020054BC57 /* guige.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = guige.png; sourceTree = "<group>"; };
 		53B59D041FD4EB8200885BBA /* gis_rect_rb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_rb.png; sourceTree = "<group>"; };
 		53B59D051FD4EB8200885BBA /* gis_rect_lt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_lt.png; sourceTree = "<group>"; };
 		53B59D061FD4EB8200885BBA /* gis_rect_rt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gis_rect_rt.png; sourceTree = "<group>"; };
@@ -208,6 +216,10 @@
 				53B59D051FD4EB8200885BBA /* gis_rect_lt.png */,
 				53B59D041FD4EB8200885BBA /* gis_rect_rb.png */,
 				53B59D061FD4EB8200885BBA /* gis_rect_rt.png */,
+				531A09851FD698350054BC57 /* check1@2x.png */,
+				531A09861FD698360054BC57 /* check2@2x.png */,
+				531A098A1FD69B020054BC57 /* guige.png */,
+				531A09891FD69B010054BC57 /* scan.png */,
 				047F9DFB1DF811ED0053E07F /* Resources.bundle */,
 				047F9DE11DF7B8070053E07F /* HBQRCode.h */,
 				047F9DE21DF7B8070053E07F /* HBQRCoder.h */,
@@ -363,12 +375,16 @@
 			files = (
 				040CA3F51DE2937200033AE3 /* LaunchScreen.storyboard in Resources */,
 				040CA3F21DE2937200033AE3 /* Assets.xcassets in Resources */,
+				531A09881FD698360054BC57 /* check2@2x.png in Resources */,
+				531A098B1FD69B020054BC57 /* scan.png in Resources */,
 				531A09821FD669780054BC57 /* Info.plist in Resources */,
 				53B59D0A1FD4EB8200885BBA /* gis_rect_rt.png in Resources */,
 				53B59D081FD4EB8200885BBA /* gis_rect_rb.png in Resources */,
+				531A09871FD698360054BC57 /* check1@2x.png in Resources */,
 				047F9DFC1DF811ED0053E07F /* Resources.bundle in Resources */,
 				040CA3F01DE2937200033AE3 /* Main.storyboard in Resources */,
 				53B59D091FD4EB8200885BBA /* gis_rect_lt.png in Resources */,
+				531A098C1FD69B020054BC57 /* guige.png in Resources */,
 				53B59D0B1FD4EB8200885BBA /* gis_rect_lb.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

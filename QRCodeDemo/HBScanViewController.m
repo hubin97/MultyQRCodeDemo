@@ -121,7 +121,7 @@
             _callBackScanResultBlock(string);
         }
         
-        [self dismissViewControllerAnimated:YES completion:nil];
+       // [self dismissViewControllerAnimated:YES completion:nil];
         
     });
 }

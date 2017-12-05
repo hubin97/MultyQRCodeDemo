@@ -140,9 +140,31 @@
     //[self setOverlayPickerView:self];
 
     //开始捕获 // saom
-    [session startRunning];
+    //[session startRunning];
 }
 
+- (void)scanAction:(UIButton *)sender
+{
+    NSLog(@"scanAction--");
+    
+    [session startRunning];
+    
+    // test
+    for (int i = 1000; i < 1000 + 4 * _styleCol; i ++)
+    {
+        UIButton *gridBtn = (UIButton *)[_scanZomeView viewWithTag:i];
+        if(i%2 == 0) [gridBtn setImage:[UIImage imageNamed:@"check2"] forState:UIControlStateNormal];
+    }
+}
+- (void)guigeAction:(UIButton *)sender
+{
+    NSLog(@"guigeAction--");
+    
+    _styleCol = (_styleCol == 2)? 4 : 2;  // 1/3
+
+    CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
+    [self createViewWithRect:mImagerect];
+}
 
 #pragma mark ---
 /**
@@ -150,14 +172,56 @@
  */
 - (CGRect)setScanAreaWithBgImg
 {
-    CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
+    // 默认 4 * 2
+    _styleCol = 2;
+    
+    // 底部view  80.0f
+    __weak typeof(self)ws = self;
+    UIView *bottomView = [[UIView alloc]init];
+    [self addSubview:bottomView];
+    bottomView.backgroundColor = [UIColor lightGrayColor];
+    
+    [bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.bottom.equalTo(ws);
+        make.height.mas_equalTo(@64);
+    }];
+    
+    // 添加操作控件
+    CGFloat kPadding = 10.0f;
+    CGFloat kBtnPadding = (DeviceMaxWidth/5 - (64 - 10 *2))/2;
+    UIButton *scanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [bottomView addSubview:scanBtn];
+    [scanBtn setImage:[UIImage imageNamed:@"scan"] forState:UIControlStateNormal];
+    [scanBtn addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
 
+    [scanBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(bottomView).offset(kPadding);
+        make.bottom.equalTo(bottomView).offset(- kPadding);
+        make.left.equalTo(bottomView).offset(DeviceMaxWidth/5 + kBtnPadding);
+        make.width.equalTo(scanBtn.mas_height);
+    }];
+    
+    UIButton *guigeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [bottomView addSubview:guigeBtn];
+    [guigeBtn setImage:[UIImage imageNamed:@"guige"] forState:UIControlStateNormal];
+    [guigeBtn addTarget:self action:@selector(guigeAction:) forControlEvents:UIControlEventTouchUpInside];
+
+    [guigeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(bottomView).offset(kPadding);
+        make.bottom.equalTo(bottomView).offset(- kPadding);
+        make.right.equalTo(bottomView).offset(- (DeviceMaxWidth/5 + kBtnPadding));
+        make.width.equalTo(guigeBtn.mas_height);
+    }];
+    
+    // 聚焦视图
+    CGRect mImagerect = CGRectMake(20*widthRate, (DeviceMaxHeight-300*widthRate)/2, 280*widthRate, 300*widthRate);
     _scanZomeView = [[UIView alloc]initWithFrame:mImagerect];
     [self addSubview:_scanZomeView];
 
     [self createViewWithRect:mImagerect];
 
     //(origin = (x = 0.323943661971831, y = 0.1875), size = (width = 0.352112676056338, height = 0.625))
+    //return [self getScanCrop:mImagerect readerViewBounds:self.frame];
     return [self getScanCrop:mImagerect readerViewBounds:self.frame];
 }
 
@@ -165,6 +229,9 @@
 {
 //    _scanZomeView.layer.borderWidth = 1.5;
 //    _scanZomeView.layer.borderColor = [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor;
+    
+    //
+    [_scanZomeView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     CGFloat iconFlagH = 30.0f;
 
@@ -179,37 +246,29 @@
         make.edges.equalTo(_scanZomeView).insets(UIEdgeInsetsMake(iconFlagH/2, iconFlagH/2, iconFlagH/2, iconFlagH/2));
     }];
     
-    // row
-    for (int row = 0; row < 3; row ++)
-    {
-        UILabel *lineLabel = [[UILabel alloc]init];
-        lineLabel.layer.borderWidth = 1.5;
-        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
-        [_gridView addSubview:lineLabel];
-        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_gridView);
-            //!!!!:注意此时gridView高度仍为0
-            //make.top.equalTo(gridView.mas_bottom).multipliedBy(1/4);
-            make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * (row + 1)/4);
-            make.height.mas_equalTo(@1);
-        }];
-    }
-    
+    // row  4
     // col  2 ~ 4
-    _styleCol = 3;  // 1/3
-    for (int col = 0; col < _styleCol; col ++)
+    for (int row = 0; row < 4; row ++)
     {
-        UILabel *lineLabel = [[UILabel alloc]init];
-        lineLabel.layer.borderWidth = 1.5;
-        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
-        [_gridView addSubview:lineLabel];
-        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.bottom.equalTo(_gridView);
-            //!!!!:注意此时gridView宽度仍为0
-            make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * (col + 1)/(_styleCol + 1));
-            make.width.mas_equalTo(@1);
-        }];
+        for (int col = 0; col < _styleCol; col ++)
+        {
+            UIButton *gridButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            gridButton.layer.borderWidth = 0.7;
+            gridButton.layer.borderColor = [UIColor redColor].CGColor;
+            [_gridView addSubview:gridButton];
+            [gridButton mas_makeConstraints:^(MASConstraintMaker *make) {
+                //make.left.right.equalTo(_gridView);
+                //!!!!:注意此时gridView高度仍为0
+                //make.top.equalTo(gridView.mas_bottom).multipliedBy(1/4);
+                make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * row/4);
+                //make.bottom.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * (row + 1)/4);
+                make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * col/_styleCol);
+                make.width.mas_equalTo((_scanZomeView.bounds.size.width - iconFlagH)/_styleCol);
+                make.height.mas_equalTo((_scanZomeView.bounds.size.height - iconFlagH)/4);
+            }];
+        }
     }
+
     
     // ------
     // 操作控件
@@ -305,46 +364,28 @@
             if(i== 105) make.right.bottom.equalTo(_scanZomeView);
         }];
         
-//        [button setNeedsLayout];
-//        [button layoutIfNeeded];
     }
-    
-//    [_gridView mas_updateConstraints:^(MASConstraintMaker *make) {
-//        make.edges.equalTo(_scanZomeView).insets(UIEdgeInsetsMake(iconFlagH/2, iconFlagH/2, iconFlagH/2, iconFlagH/2));
-//    }];
-//
+
     // ---
     [_gridView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
-    // row
-    for (int row = 0; row < 3; row ++)
+    for (int row = 0; row < 4; row ++)
     {
-        UILabel *lineLabel = [[UILabel alloc]init];
-        lineLabel.layer.borderWidth = 1.5;
-        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
-        [_gridView addSubview:lineLabel];
-        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_gridView);
-            //!!!!:注意此时gridView高度仍为0
-            //make.top.equalTo(gridView.mas_bottom).multipliedBy(1/4);
-            make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * (row + 1)/4);
-            make.height.mas_equalTo(@1);
-        }];
-    }
-
-    // col  2 ~ 4
-    for (int col = 0; col < _styleCol; col ++)
-    {
-        UILabel *lineLabel = [[UILabel alloc]init];
-        lineLabel.layer.borderWidth = 1.5;
-        lineLabel.layer.borderColor = [UIColor redColor].CGColor;
-        [_gridView addSubview:lineLabel];
-        [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.bottom.equalTo(_gridView);
-            //!!!!:注意此时gridView宽度仍为0
-            make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * (col + 1)/(_styleCol + 1));
-            make.width.mas_equalTo(@1);
-        }];
+        for (int col = 0; col < _styleCol; col ++)
+        {
+            UIButton *gridButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            gridButton.layer.borderWidth = 0.7;
+            gridButton.layer.borderColor = [UIColor redColor].CGColor;
+            [_gridView addSubview:gridButton];
+            [gridButton setTag:1000 + (row * _styleCol + col)];
+            [gridButton addTarget:self action:@selector(gridBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+            [gridButton mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(_gridView).offset((_scanZomeView.bounds.size.height - iconFlagH) * row/4);
+                make.left.equalTo(_gridView).offset((_scanZomeView.bounds.size.width - iconFlagH) * col/_styleCol);
+                make.width.mas_equalTo((_scanZomeView.bounds.size.width - iconFlagH)/_styleCol);
+                make.height.mas_equalTo((_scanZomeView.bounds.size.height - iconFlagH)/4);
+            }];
+        }
     }
 }
 
@@ -355,7 +396,10 @@
     //    [self performSelectorOnMainThread:@selector(selectCell) withObject:nil waitUntilDone:YES];
 }
 
-
+- (void)gridBtnAction:(UIButton *)sender
+{
+    NSLog(@"gridBtnAction:%ld",(long)sender.tag);
+}
 
 
 #pragma mark --
